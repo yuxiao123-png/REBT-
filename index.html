@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>晓喻 - REBT+脑科学情绪信念量表</title>
+    <style>
+        /* 全局样式：蓝色背景，统一字体，居中布局 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+        }
+        body {
+            background-color: #e6f2ff; /* 柔和蓝色背景，适配测评舒适视觉 */
+            padding: 20px;
+        }
+        /* 容器样式：白色卡片，居中，阴影提升质感 */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* 晓喻标识样式：突出显示，蓝色字体 */
+        .xiaoyu-logo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e88e5; /* 晓喻专属蓝色 */
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #1e88e5;
+        }
+        /* 支付提示样式：醒目，引导支付 */
+        .pay-tip {
+            background-color: #1e88e5;
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        .pay-link {
+            color: #fff;
+            text-decoration: underline;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .pay-link:hover {
+            text-decoration: none;
+        }
+        /* 个人信息填写区域 */
+        .info-group {
+            margin-bottom: 20px;
+        }
+        .info-group label {
+            display: inline-block;
+            width: 80px;
+            font-weight: bold;
+            color: #333;
+            margin-right: 10px;
+        }
+        .info-group input {
+            padding: 8px 12px;
+            width: calc(100% - 100px);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .info-group input:focus {
+            outline: none;
+            border-color: #1e88e5;
+            box-shadow: 0 0 5px rgba(30, 136, 229, 0.3);
+        }
+        /* 测评时间样式：灰色小字，右对齐 */
+        .test-time {
+            text-align: right;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        /* 测评题目样式 */
+        .test-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .question-list {
+            margin-bottom: 30px;
+        }
+        .question-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-left: 3px solid #1e88e5;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .question-item p {
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: #333;
+        }
+        .option-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .option-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-group label:hover {
+            border-color: #1e88e5;
+            background-color: #f0f7ff;
+        }
+        .option-group input[type="radio"]:checked + span {
+            color: #1e88e5;
+            font-weight: bold;
+        }
+        .option-group input[type="radio"] {
+            display: none;
+        }
+        /* 提交按钮样式 */
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #1e88e5;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .submit-btn:hover {
+            background-color: #1976d2;
+        }
+        /* 合规提示样式 */
+        .compliance-tip {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            line-height: 1.5;
+        }
+        /* 支付成功提示（默认隐藏，支付后显示） */
+        .pay-success {
+            display: none;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        /* 测评区域（默认隐藏，支付后显示） */
+        .test-content {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 晓喻标识 -->
+        <div class="xiaoyu-logo">晓喻 · REBT+脑科学情绪信念量表&lt;/div&gt;
+
+        <!-- 支付提示（未支付状态显示） -->
+        <div class="pay-tip" id="payTip">
+            请先支付后开启测评 <a href="#付款:晓喻(muqin5566)/晓喻收款/001" class="pay-link" target="_blank"&gt;点击此处付款&lt;/a&gt;
+        &lt;/div&gt;
+
+        <!-- 支付成功提示（支付后显示） -->
+        <div class="pay-success" id="paySuccess">
+            支付成功！可开始填写个人信息及测评
+        &lt;/div&gt;
+
+        <!-- 测评内容（支付后显示） -->
+        <div class="test-content" id="testContent"&gt;
+            <!-- 个人信息填写 -->
+            <div class="info-group">
+                <label for="name">姓名：</label>
+                <input type="text" id="name" placeholder="请输入您的姓名" required>
+            </div>
+            <div class="info-group">
+                <label for="age">年龄：</label>
+                <input type="number" id="age" placeholder="请输入您的年龄" min="18" max="100" required>
+            &lt;/div&gt;
+
+            <!-- 测评时间（自动获取当前时间，不可修改） -->
+            <div class="test-time" id="testTime"&gt;测评时间：&lt;/div&gt;
+
+            <!-- 测评标题 -->
+            <h2 class="test-title">情绪信念量表（15题，5分钟完成）&lt;/h2&gt;
+
+            <!-- 作答说明 -->
+            <p style="text-align: center; margin-bottom: 20px; color: #666;">请根据近1个月的实际感受，对下列每题选择对应选项（1=完全不符合，2=不太符合，3=不确定，4=比较符合，5=完全符合）&lt;/p&gt;
+
+            <!-- 测评题目列表 -->
+            <form id="testForm" class="question-list">
+                <div class="question-item">
+                    <p>1. 如果我做事情出了错，就会觉得自己很没用、很失败。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q1" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q1" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q1" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q1" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q1" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>2. 我必须得到身边所有人的认可和喜欢，不然就觉得自己是个失败者。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q2" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q2" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q2" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q2" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q2" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>3. 遇到不顺心的事，我总会忍不住往最坏的方向想，觉得最坏的结果一定会发生。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q3" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q3" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q3" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q3" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q3" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>4. 如果有人不尊重我，我就会觉得自己本身不值得被尊重。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q4" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q4" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q4" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q4" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q4" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>5. 我要求自己必须做到完美，只要出现一点失误，就会深深自责。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q5" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q5" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q5" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q5" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q5" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>6. 当事情的结果和我预期的不一样时，我就会陷入焦虑，没法冷静下来。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q6" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q6" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q6" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q6" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q6" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>7. 我觉得自己必须比身边的人优秀，否则就没有存在的价值。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q7" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q7" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q7" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q7" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q7" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>8. 被别人批评一句，我会反复琢磨很久，忍不住觉得自己一无是处。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q8" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q8" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q8" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q8" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q8" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>9. 如果某件事我没做好，就会觉得自己这辈子都做不好这类事情。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q9" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q9" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q9" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q9" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q9" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>10. 我没法接受自己的缺点，一旦发现自己有不足，就会否定自己的全部。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q10" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q10" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q10" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q10" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q10" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>11. 如果身边的人不理解我，我就会特别委屈，陷入自我内耗中难以自拔。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q11" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q11" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q11" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q11" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q11" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>12. 我总觉得事情必须一帆风顺，一旦遇到挫折，就会觉得一切都完了。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q12" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q12" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q12" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q12" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q12" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>13. 别人对我的评价，直接决定了我对自己的看法和认可程度。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q13" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q13" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q13" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q13" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q13" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>14. 我总是过度担心自己会出错，哪怕是很小的一件事，也会反复纠结。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q14" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q14" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q14" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q14" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q14" value="5"><span>5. 完全符合</span></label>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <p>15. 如果我没有达到自己设定的目标，就会认为是自己不够努力、不够优秀。</p>
+                    <div class="option-group">
+                        <label><input type="radio" name="q15" value="1" required><span>1. 完全不符合</span></label>
+                        <label><input type="radio" name="q15" value="2"><span>2. 不太符合</span></label>
+                        <label><input type="radio" name="q15" value="3"><span>3. 不确定</span></label>
+                        <label><input type="radio" name="q15" value="4"><span>4. 比较符合</span></label>
+                        <label><input type="radio" name="q15" value="5"><span>5. 完全符合</span></label>
+                    </div&gt;
+                &lt;/div&gt;
+
+                <!-- 提交按钮 -->
+                <button type="submit" class="submit-btn">提交测评</button>
+            </form>
+
+            <!-- 合规提示 -->
+            <div class="compliance-tip">
+                本量表仅用于个人情绪信念自查，不构成临床诊断、治疗建议；测评结果仅用于个人参考，严格保护个人隐私。
+                若存在长期严重情绪困扰，请及时寻求专业心理师或医疗机构帮助。
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. 自动获取当前测评时间，格式：年-月-日 时:分:秒
+        function getCurrentTime() {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hour = String(date.getHours()).padStart(2, '0');
+            const minute = String(date.getMinutes()).padStart(2, '0');
+            const second = String(date.getSeconds()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+        }
+        // 渲染测评时间
+        document.getElementById('testTime').innerText = `测评时间：${getCurrentTime()}`;
+
+        // 2. 模拟支付逻辑（实际场景需对接真实支付接口，此处仅做界面切换）
+        // 点击支付链接后，模拟支付成功，切换界面
+        const payLink = document.querySelector('.pay-link');
+        const payTip = document.getElementById('payTip');
+        const paySuccess = document.getElementById('paySuccess');
+        const testContent = document.getElementById('testContent');
+
+        payLink.addEventListener('click', function(e) {
+            // 模拟支付跳转后返回，此处仅做界面切换（实际需根据支付结果判断）
+            setTimeout(() => {
+                payTip.style.display = 'none';
+                paySuccess.style.display = 'block';
+                testContent.style.display = 'block';
+            }, 1000);
+        });
+
+        // 3. 测评提交逻辑（可根据需求对接后端存储数据）
+        const testForm = document.getElementById('testForm');
+        testForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // 获取个人信息
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+            // 获取测评答案（可根据需求处理答案，如计算总分、存储等）
+            const answers = {};
+            for (let i = 1; i <= 15; i++) {
+                const radio = document.querySelector(`input[name="q${i}"]:checked`);
+                if (radio) {
+                    answers[`q${i}`] = radio.value;
+                }
+            }
+            // 模拟提交成功提示
+            alert(`姓名：${name}，年龄：${age}，测评提交成功！\n测评时间：${getCurrentTime()}`);
+            // 实际场景可在此处发送数据到后端
+        });
+    </script>
+</body>
+</html>
